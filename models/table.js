@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
-const string = require('joi/lib/types/string');
-const number = require('joi/lib/types/number');
+const {restaurantSchema}=require('../models/restaurant')
 
 
 const tableSchema = new mongoose.Schema({
@@ -11,7 +10,13 @@ const tableSchema = new mongoose.Schema({
     },
     seat: {
         type: Number,
-        required: true
+        required: true,
+        minlength:2,
+        maxlength:30
+    },
+    restaurant:{
+        type:restaurantSchema,
+        required:true
     }
 });
 
@@ -20,7 +25,8 @@ const Table = mongoose.model('Table', tableSchema);
 function validationTable(table) {
     const tableSchema = {
         name: Joi.string().required(),
-        seat: Joi.number().required()
+        seat: Joi.number().required().max(30).min(2),
+        restaurantId:Joi.array().item(Joi.string()).required()
     }
     return Joi.validate(table, tableSchema);
 };

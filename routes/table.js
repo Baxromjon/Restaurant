@@ -3,6 +3,7 @@ const router = express.Router();
 const { Table, validationTable } = require('../models/table');
 const auth = require('../middleware/auth');
 const mongoose = require('mongoose');
+const { Restaurant } = require('../models/restaurant');
 
 router.get('/', async (req, res) => {
     const tables = await Table.find().sort('name');
@@ -14,10 +15,17 @@ router.post('/', async (req, res) => {
     const { error } = validationTable(req.body);
     if (error)
         return res.status(400).send(error.details[0].message);
+    const restaurant = await Restaurant.findById(req.body.restaurantId);
+    if (!restaurant)
+        return res.status(400).send('Restaraunt not found!');
 
     let table = new Table({
         name: req.body.name,
-        seat: req.body.seat
+        seat: req.body.seat,
+        restaurant:{
+            _id:restaurant._id,
+            name:restaurant.name
+        }
     });
     table = await table.save();
     res.status(200).send(table);

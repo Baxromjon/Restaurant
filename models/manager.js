@@ -26,10 +26,7 @@ const managerSchema = new mongoose.Schema({
         minlength: 6,
         maxlength: 1024
     },
-    restaurant:[{
-        type:restaurantSchema,
-        required:true
-    }],
+    restaurant:[restaurantSchema],
     isAdmin: Boolean
 });
 managerSchema.methods.generateAuthToken = function () {
